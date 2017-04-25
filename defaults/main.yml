@@ -1,0 +1,6 @@
+---
+tmp_storage_dir: "/tmp"
+vars_from_file: False
+username: ubuntu
+sidekiq_env:
+  RAILS_ENV: production

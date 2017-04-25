@@ -1,0 +1,10 @@
+---
+
+- name: Read data from the file
+  slurp:
+    src: "{{ sidekiq_conf_file }}"
+  register: sidekiq_conf_text
+
+- name: fetch the vars
+  set_fact: sidekiq_conf="{{ sidekiq_conf_text['content'] | b64decode | from_yaml }}"
+

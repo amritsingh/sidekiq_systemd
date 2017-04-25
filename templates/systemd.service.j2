@@ -1,0 +1,20 @@
+[Unit]
+Description={{ item.service_name }}
+After=network.target
+
+[Service]
+Type=simple
+
+User={{ user_name }}
+
+WorkingDirectory={{ app_path }}
+Environment={% for k in sidekiq_env%}{{k}}={{sidekiq_env[k]}} {% endfor %}
+
+ExecStart=/bin/bash -lc '{{ item.command }}'
+TimeoutSec=15
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
