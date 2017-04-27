@@ -3,7 +3,7 @@ galaxy_info:
   description: An ansible role to setup sidekiq, clockwork etc. as systemd services.
   company:
   license: MIT
-  min_ansible_version: 0.1
+  min_ansible_version: 1.9
   platforms:
     - name: Ubuntu
       versions:
