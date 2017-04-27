@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Amrit Singh (amritsingh)
+  description: An ansible role to setup sidekiq, clockwork etc. as systemd services.
+  company:
+  license: MIT
+  min_ansible_version: 0.1
+  platforms:
+    - name: Ubuntu
+      versions:
+      - 16.04
+  galaxy_tags:
+    - sidekiq
+    - clockwork
+    - systemd
+    - syetem.d
+    - system
+    - cloud
+    - cloud:ec2
+dependencies: []
