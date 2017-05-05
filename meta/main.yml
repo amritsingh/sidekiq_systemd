@@ -12,8 +12,6 @@ galaxy_info:
     - sidekiq
     - clockwork
     - systemd
-    - syetem.d
-    - system
     - cloud
     - cloud:ec2
 dependencies: []
