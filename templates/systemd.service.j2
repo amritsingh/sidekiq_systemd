@@ -13,6 +13,11 @@ Environment={% for k in sidekiq_env%}{{k}}={{sidekiq_env[k]}} {% endfor %}
 ExecStart=/bin/bash -lc '{{ item.command }}'
 TimeoutSec=15
 
+{% if item.options is defined %}
+{% for k in item.options %}{{k}}
+{% endfor %}
+{% endif %}
+
 Restart=always
 
 [Install]
