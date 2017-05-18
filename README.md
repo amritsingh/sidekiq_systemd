@@ -25,6 +25,8 @@ sidekiq_systemd_conf:                # Various sidekiq/clockwork processes confi
   config:
     - service_name: sidekiq1
       command: "bundle exec sidekiq -c 4 -q default -L log/sidekiq.log"
+      options:
+        - MemoryLimit=1200M
     - service_name: sidekiq2
       command: "bundle exec sidekiq -c 4 -q default -L log/sidekiq.log"
     - service_name: clockwork
@@ -43,6 +45,8 @@ The file looks like this:
 config:
   - service_name: sidekiq1
     command: "bundle exec sidekiq -c 4 -q default -L log/sidekiq.log"
+    options:
+      - MemoryLimit=1200M
   - service_name: sidekiq2
     command: "bundle exec sidekiq -c 4 -q default -L log/sidekiq.log"
   - service_name: clockwork
