@@ -5,6 +5,11 @@
     src: "{{ sidekiq_conf_file }}"
   register: sidekiq_conf_text
 
+- name: fetch the vars for backup
+  set_fact: sidekiq_conf_bak="{{ sidekiq_conf_text['content'] | b64decode | from_yaml }}"
+  when: read_backup_file == True
+
 - name: fetch the vars
   set_fact: sidekiq_conf="{{ sidekiq_conf_text['content'] | b64decode | from_yaml }}"
+  when: read_backup_file == False
 

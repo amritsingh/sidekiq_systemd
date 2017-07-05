@@ -5,35 +5,40 @@
 
 - set_fact: sidekiq_conf_file="{{ tmp_storage_dir }}/systemd.bak"
   when: backup_file.stat.exists == True
+- set_fact: read_backup_file=True
+  when: backup_file.stat.exists == True
 - include: read_vars_from_remote_file.yml
   when: backup_file.stat.exists == True
 
-- name: stop old services
-  shell: systemctl stop {{ item.service_name }} && systemctl disable {{ item.service_name }} && rm /etc/systemd/system/{{ item.service_name }}.service
-  with_items: "{{ sidekiq_conf['config'] }}"
-  when: backup_file.stat.exists == True
-  sudo: True
-
-- name: reload systemd
-  shell: systemctl daemon-reload && systemctl reset-failed
-  sudo: True
-  when: backup_file.stat.exists == True
-
-- set_fact: sidekiq_conf_file="{{ sidekiq_systemd_conf_file }}"
+- set_fact: sidekiq_conf_file="{{sidekiq_systemd_conf_file}}"
   when: vars_from_file == True
+- set_fact: read_backup_file=False
 - include: read_vars_from_remote_file.yml
   when: vars_from_file == True
 
 - set_fact: sidekiq_conf = "{{ sidekiq_systemd_conf }}"
   when: vars_from_file == False
 
+- name: stop old services
+  shell: systemctl stop {{ item.service_name }} && systemctl disable {{ item.service_name }} && rm /etc/systemd/system/{{ item.service_name }}.service
+  with_items: "{{ sidekiq_conf_bak['config'] }}"
+  when: backup_file.stat.exists == True and sidekiq_conf != sidekiq_conf_bak
+  sudo: True
+
+- name: reload systemd
+  shell: systemctl daemon-reload && systemctl reset-failed
+  sudo: True
+  when: backup_file.stat.exists == True and sidekiq_conf != sidekiq_conf_bak
+
 - name: create service files
   template: src=systemd.service.j2 dest=/etc/systemd/system/{{ item.service_name }}.service mode=0644
   with_items: "{{ sidekiq_conf['config'] }}"
+  when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
   sudo: True
 
 - shell: systemctl daemon-reload
   sudo: True
+  when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
 
 - name: restart services
   systemd: name={{ item.service_name }} state=restarted
@@ -42,3 +47,5 @@
 
 - copy: content="{{ sidekiq_conf | to_nice_yaml(indent=2) }}" dest="{{ tmp_storage_dir }}/systemd.bak" force=yes
   sudo: True
+  when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
+
