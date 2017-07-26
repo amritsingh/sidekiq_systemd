@@ -36,7 +36,10 @@
   when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
 
 - name: restart services
-  systemd: name={{ item.service_name }} state=restarted
+  systemd:
+    name: "{{item.service_name}}"
+    state: restarted
+    enabled: True
   with_items: "{{ sidekiq_conf['config'] }}"
   sudo: True
 
