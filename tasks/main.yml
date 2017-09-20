@@ -18,22 +18,22 @@
   shell: systemctl stop {{ item.service_name }} && systemctl disable {{ item.service_name }} && rm /etc/systemd/system/{{ item.service_name }}.service
   with_items: "{{ sidekiq_conf_bak['config'] }}"
   when: backup_file.stat.exists == True and sidekiq_conf != sidekiq_conf_bak
-  sudo: True
+  become: True
 
 - name: reload systemd
   shell: systemctl daemon-reload && systemctl reset-failed
-  sudo: True
-  when: backup_file.stat.exists == True and sidekiq_conf != sidekiq_conf_bak
+  become: True
+  when: backup_file.stat.exists == True and sidekiq_conf != sidekiq_conf_bak and reload_daemon == True
 
 - name: create service files
   template: src=systemd.service.j2 dest=/etc/systemd/system/{{ item.service_name }}.service mode=0644
   with_items: "{{ sidekiq_conf['config'] }}"
   when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
-  sudo: True
+  become: True
 
 - shell: systemctl daemon-reload
-  sudo: True
-  when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
+  become: True
+  when: (backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak) and reload_daemon == True
 
 - name: restart services
   systemd:
@@ -41,9 +41,9 @@
     state: restarted
     enabled: True
   with_items: "{{ sidekiq_conf['config'] }}"
-  sudo: True
+  become: True
 
 - copy: content="{{ sidekiq_conf | to_nice_yaml(indent=2) }}" dest="{{ tmp_storage_dir }}/systemd.bak" force=yes
-  sudo: True
+  become: True
   when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
 
