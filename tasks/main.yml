@@ -31,7 +31,7 @@
   when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
   become: True
 
-- shell: systemctl daemon-reload
+- systemd: daemon_reload=yes
   become: True
   when: (backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak) and reload_daemon == True
 

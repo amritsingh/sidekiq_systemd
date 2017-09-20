@@ -1,5 +1,6 @@
 ---
 tmp_storage_dir: "/tmp"
 user_name: ubuntu
+reload_daemon: False
 sidekiq_env:
   RAILS_ENV: production
