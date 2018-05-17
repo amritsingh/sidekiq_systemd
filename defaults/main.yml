@@ -1,5 +1,6 @@
 ---
 tmp_storage_dir: "/tmp"
+tmp_file_name: "systemd.bak"
 user_name: ubuntu
 reload_daemon: False
 sidekiq_env:

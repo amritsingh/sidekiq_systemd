@@ -1,9 +1,9 @@
 ---
 
-- stat: path="{{ tmp_storage_dir }}/systemd.bak"
+- stat: path="{{tmp_storage_dir}}/{{tmp_file_name}}"
   register: backup_file
 
-- set_fact: sidekiq_conf_file="{{ tmp_storage_dir }}/systemd.bak"
+- set_fact: sidekiq_conf_file="{{tmp_storage_dir}}/{{tmp_file_name}}"
   when: backup_file.stat.exists == True
 - set_fact: read_backup_file=True
   when: backup_file.stat.exists == True
@@ -43,7 +43,7 @@
   with_items: "{{ sidekiq_conf['config'] }}"
   become: True
 
-- copy: content="{{ sidekiq_conf | to_nice_yaml(indent=2) }}" dest="{{ tmp_storage_dir }}/systemd.bak" force=yes
+- copy: content="{{ sidekiq_conf | to_nice_yaml(indent=2) }}" dest="{{tmp_storage_dir}}/{{tmp_file_name}}" force=yes
   become: True
   when: backup_file.stat.exists == False or sidekiq_conf != sidekiq_conf_bak
 
